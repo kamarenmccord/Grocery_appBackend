@@ -50,7 +50,6 @@ app.get('/userView/:user', (req, res)=>{
 app.post('/create', (req, res)=>{
     // the req.body should be in json format send as FormData
     const data = req.body;
-    console.log(req.body);
     
     mealModel.create(data, (error, data)=>{
         if (error){
@@ -59,6 +58,40 @@ app.post('/create', (req, res)=>{
             res.status(201).send(data);
         }
     })
+})
+
+app.get('/post/:postId', (req, res)=>{
+    const id = req.params.postId;
+    console.log(`post with id requested: ${id}`)
+    mealModel.findOne({_id: id}, (err, data)=>{
+        if (err){
+            res.status(404).send(false)
+        } else {
+            res.status(201).send(data);
+        }
+    })
+})
+
+app.put('/update/:postId', (req, res)=>{
+    const id = req.params.postId;
+    const data = req.body
+    console.log(`post with id being updated: ${id}`)
+    let returnError;
+    let returnRes;
+
+    mealModel.updateOne({_id:id}, data, (error, updatedData)=>{
+        if(error){
+            returnError = error
+        } else {
+            returnRes = updatedData
+        }
+    })
+
+    if (returnError){
+        res.status(500).send(returnError);
+    } else {
+        res.status(200).send(returnRes);
+    }
 })
 
 app.delete('/:postId', (req,res)=>{
